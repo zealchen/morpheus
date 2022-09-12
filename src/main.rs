@@ -4,7 +4,7 @@ use api::echo::{
     echo,
 };
 use std::env;
-use log::{info, error};
+use log::{info, error, debug};
 use log4rs;
 use actix_web::{App, HttpServer, web};
 use std::fs;
@@ -56,13 +56,13 @@ fn test() -> PyResult<String>{
         syspath.insert(0, &path)?;
 
         let app: Py<PyAny> = PyModule::from_code(py, &py_app, "", "")?
-            .getattr("Broker")?
+            .getattr("Model")?
             .into();
         
         let path_holder = env::current_dir().unwrap().join("python_app");
         let app_path = path_holder.to_str().unwrap();
         let kwargs = [("app_path", app_path)].into_py_dict(py);
-        let obj = app.call(py, (), Some(kwargs)).unwrap().getattr(py, "process")?.into();
+        let obj = app.call(py, (), Some(kwargs)).unwrap().getattr(py, "predict")?.into();
         Ok(obj)
     });
 

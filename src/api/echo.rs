@@ -53,7 +53,7 @@ pub struct ModelServerResult {
 }
 
 
-#[get("/app/ins/python_echo")]
+#[get("/app/instance/predict")]
 async fn echo(python_mod: web::Data<Py<PyAny>>, req: HttpRequest) -> Result<Json<ModelServerResult>, ModelServerErrorCode> {
     let res = Python::with_gil(|py| -> PyResult<Py<PyAny>> {
         let args = PyTuple::new(py, &[req.query_string()]);
