@@ -1,0 +1,14 @@
+refresh_rate: 30 seconds
+appenders:
+  stdout:
+    kind: console
+  file:
+    kind: file
+    path: "log/log.txt"
+    encoder:
+      pattern: "[{d(%Y-%m-%d %H:%M:%S)}][{f}:{L}][{P}][{l}] - {m}{n}"
+root:
+  level: info
+  appenders:
+    - stdout
+    - file

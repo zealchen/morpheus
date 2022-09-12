@@ -3,6 +3,9 @@ mod api;
 use api::echo::{
     echo,
 };
+use std::env;
+use log::{info, error};
+use log4rs;
 use actix_web::{App, HttpServer, web};
 use std::fs;
 use std::io::Result;
@@ -42,23 +45,27 @@ fn test() -> PyResult<String>{
 
 #[actix_web::main]
  async fn main() -> Result<()> {
-//fn main() {
-    let path = Path::new("/root/tmp_project/morpheus/python_app");
+    log4rs::init_file("conf/log4rs.yaml", Default::default()).unwrap();
+    info!("Greetings, Morpheus.");
+
+    let path = Path::new("python_app");
     let py_app = fs::read_to_string(path.join("broker.py")).unwrap();
     let from_python = Python::with_gil(|py| -> PyResult<Py<PyAny>> {
+        debug!("in lambda...");
         let syspath: &PyList = py.import("sys")?.getattr("path")?.downcast::<PyList>()?;
         syspath.insert(0, &path)?;
+
         let app: Py<PyAny> = PyModule::from_code(py, &py_app, "", "")?
             .getattr("Broker")?
             .into();
-        let obj = app.call0(py).unwrap().getattr(py, "broke")?.into();
+        
+        let path_holder = env::current_dir().unwrap().join("python_app");
+        let app_path = path_holder.to_str().unwrap();
+        let kwargs = [("app_path", app_path)].into_py_dict(py);
+        let obj = app.call(py, (), Some(kwargs)).unwrap().getattr(py, "process")?.into();
         Ok(obj)
     });
 
-    // let res = Python::with_gil(|py| -> PyResult<Py<PyAny>> {
-    //     from_python.unwrap().call0(py)
-    // });
-    // print!("result: {}", res.unwrap())
     let e = web::Data::new(from_python.unwrap());
     println!("Starting server at http://127.0.0.1:8000");
     HttpServer::new(move|| 
