@@ -10,7 +10,7 @@ from albumentations.pytorch import ToTensorV2
 from juans.utils.image import read_image
 
 
-class Broker:
+class Model:
     def __init__(self, **kwargs):
         # FIXME: When rust call python, the __file__ is null
         if kwargs.get('app_path'):
@@ -26,7 +26,7 @@ class Broker:
         self.model.eval()
         self.logger.info('finish init.')
 
-    def process(self, **kwargs):
+    def predict(self, **kwargs):
         image_data = read_image(self.demo_image)
         one_batch = self.test_transforms(image=image_data)["image"].unsqueeze(0)
         with torch.no_grad():

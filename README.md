@@ -1,12 +1,11 @@
-# morpheus
+# Morpheus
 
-## An AI predicting runtime
+## Morpheus is an artificial intelligence predicting runtime written in rust with actix-web.
 
-Morpheus is ...
 
 * **key feature one:**  ...
-* **key feature tow:** ...
-&nbsp;
+* **key feature two:** ...
+
 
 ### Getting started
 
@@ -20,33 +19,24 @@ class Model:
     def __init__(self):
         pass
 
-    def process(self, **kwargs):
+    def predict(self, **kwargs):
         return json.dumps({
             "hello": "world"
         })
 
 ```
 
-**Step 2:** Build
+**Step 2:** Run
 
 ```bash
-cargo build ...
+cargo run
 ```
 
-**Step 3:** Run
+**Step 3:** Visit the local server
 
 ```bash
-cargo Run ...
+curl 0:8000/app/instance/predict
 ```
-
-
-### Features
-
-***One***
-
-...
-
-***Tow**
 
 
 ### Support
